@@ -8,6 +8,9 @@ namespace LionPetManagement_HoaLQ.Models;
 
 public partial class SU25LionDBContext : DbContext
 {
+    public SU25LionDBContext()
+    {
+    }
     public SU25LionDBContext(DbContextOptions<SU25LionDBContext> options)
         : base(options)
     {
