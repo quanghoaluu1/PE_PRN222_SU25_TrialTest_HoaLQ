@@ -10,10 +10,8 @@ public class LogoutModel : PageModel
     public async Task<IActionResult> OnGet()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        if (Request.Cookies.TryGetValue("FullName", out var fullName))
-        {
-            Response.Cookies.Delete("FullName");
-        }
+        Response.Cookies.Delete(CookieAuthenticationDefaults.AuthenticationScheme);
+        
         return RedirectToPage("/Index");
     }
 }

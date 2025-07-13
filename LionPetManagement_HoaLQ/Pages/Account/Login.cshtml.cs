@@ -58,6 +58,7 @@ public class LoginModel : PageModel
             var authenticationProperties = new AuthenticationProperties
             {
                 IsPersistent = false,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(5)
             };
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperties).Wait();
             return RedirectToPage("/Index");

@@ -1,4 +1,4 @@
-@page
+@page "/LionProfile/Delete"
 @model LionPetManagement_HoaLQ.Pages.LionProfiles.DeleteModel
 
 @{
@@ -52,7 +52,36 @@
     
     <form method="post">
         <input type="hidden" asp-for="LionProfile.LionProfileId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <input type="submit" id="btnHubDelete" value="Delete" class="btn btn-danger" /> |
         <a asp-page="./Index">Back to List</a>
     </form>
 </div>
+
+<script src="~/js/signalr/signalr.js"></script>
+<script>
+    "use strict";
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/LionProfileHub").build();
+
+    connection.start().then(function () {
+        console.log("Connected to the SignalR Hub");
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    document.getElementById("btnHubDelete").addEventListener("click", function (event) {
+
+
+        var dataObj = document.getElementById("LionProfile_LionProfileId").value;
+        console.log(dataObj);
+
+        connection.invoke("Hub_DeleteProfileAsync", dataObj)
+            .then(function (){
+                window.location.href = "/LionProfiles/Index";
+            }).catch(function (err) {
+            return console.error(err.toString());
+        });
+        event.preventDefault();
+    });
+
+</script>

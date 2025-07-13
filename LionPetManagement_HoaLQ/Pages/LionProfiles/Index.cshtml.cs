@@ -12,7 +12,6 @@ namespace LionPetManagement_HoaLQ.Pages.LionProfiles
 {
     public class IndexModel : PageModel
     {
-        private readonly LionPetManagement_HoaLQ.Models.SU25LionDBContext _context;
         private readonly LionProfileService _lionProfileService;
 
         public IndexModel(LionProfileService lionProfileService)

@@ -1,5 +1,7 @@
 using LionPetManagement_BLL;
 using LionPetManagement_DAO;
+using LionPetManagement_DAO.Basic;
+using LionPetManagement_HoaLQ.Hub;
 using LionPetManagement_HoaLQ.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +16,15 @@ builder.Services.AddScoped<LionAccountService>();
 builder.Services.AddScoped<LionAccountRepository>();
 builder.Services.AddScoped<LionProfileService>();
 builder.Services.AddScoped<LionProfileRepository>();
+builder.Services.AddScoped<LionTypeService>();
+builder.Services.AddScoped<LionTypeRepository>();
+builder.Services.AddSignalR();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.AccessDeniedPath = "/Accounts/Forbidden";
+        options.AccessDeniedPath = "/Account/Forbidden";
         options.LoginPath = "/Login";
-        options.LogoutPath = "/Accounts/Logout";
+        options.LogoutPath = "/Account/Logout";
     });
 var app = builder.Build();
 
@@ -37,6 +42,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.MapHub<LionProfileHub>("/LionProfileHub");
 
 app.MapRazorPages().RequireAuthorization();
 

@@ -2,22 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LionPetManagement_BLL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LionPetManagement_HoaLQ.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LionPetManagement_HoaLQ.Pages.LionProfiles
 {
+    [Authorize(Roles = "2")]
+
     public class EditModel : PageModel
     {
         private readonly LionPetManagement_HoaLQ.Models.SU25LionDBContext _context;
-
-        public EditModel(LionPetManagement_HoaLQ.Models.SU25LionDBContext context)
+        private readonly LionTypeService _lionTypeService;
+        private readonly LionProfileService _lionProfileService;
+        public EditModel(LionTypeService lionTypeService, LionProfileService lionProfileService)
         {
-            _context = context;
+            _lionTypeService = lionTypeService;
+            _lionProfileService = lionProfileService;
         }
+
 
         [BindProperty]
         public LionProfile LionProfile { get; set; } = default!;
@@ -28,14 +35,14 @@ namespace LionPetManagement_HoaLQ.Pages.LionProfiles
             {
                 return NotFound();
             }
-
-            var lionprofile =  await _context.LionProfiles.FirstOrDefaultAsync(m => m.LionProfileId == id);
+            var lionTypes =  _lionTypeService.GetAllLionTypesAsync();
+            var lionprofile = await _lionProfileService.GetProfileByIdAsync(id.Value);
             if (lionprofile == null)
             {
                 return NotFound();
             }
             LionProfile = lionprofile;
-           ViewData["LionTypeId"] = new SelectList(_context.LionTypes, "LionTypeId", "LionTypeId");
+            ViewData["LionTypeId"] = new SelectList(lionTypes, "LionTypeId", "LionTypeName");
             return Page();
         }
 
@@ -47,25 +54,8 @@ namespace LionPetManagement_HoaLQ.Pages.LionProfiles
             {
                 return Page();
             }
-
-            _context.Attach(LionProfile).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LionProfileExists(LionProfile.LionProfileId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            LionProfile.ModifiedDate = DateTime.Now;
+            await _lionProfileService.UpdateProfileAsync(LionProfile);
             return RedirectToPage("./Index");
         }
 

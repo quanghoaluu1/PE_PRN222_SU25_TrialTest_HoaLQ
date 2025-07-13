@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace LionPetManagement_HoaLQ.Models;
 
@@ -9,17 +10,19 @@ public partial class LionProfile
 {
     public int LionProfileId { get; set; }
 
+    [Required]
     public int LionTypeId { get; set; }
-
+    [Required]
+    [RegularExpression(@"^(?=.{4,})([A-Z][a-z]*)(\s[A-Z][a-z]*)*$", ErrorMessage = "Minimum 4 characters, Each word starts with a capital letter. No special characters ")]
     public string LionName { get; set; }
-
+    [Required]
+    [Range(30, Int32.MaxValue, ErrorMessage = "Weight must be greater than 30 kg")]
     public double Weight { get; set; }
-
+    [Required]
     public string Characteristics { get; set; }
-
+    [Required]
     public string Warning { get; set; }
-
-    public DateTime ModifiedDate { get; set; }
+    public DateTime ModifiedDate { get; set; } = DateTime.Now;
 
     public virtual LionType LionType { get; set; }
 }

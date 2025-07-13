@@ -1,15 +1,26 @@
-@page "/LionProfiles/Index/"
-@model LionPetManagement_HoaLQ.Pages.LionProfiles.IndexModel
+﻿@page "/LionProfiles/Search"
+@model LionPetManagement_HoaLQ.Pages.LionProfiles.Search
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
-<a asp-page="/LionProfiles/Search">Search</a>
+
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+<form method="get">
+    <div>
+        <label for="weight">Weight</label>
+        <input type="number" id="weight" name="weight" value="@Model.Weight" />
+    </div>
+    <div>
+        <label for="name">Lion Name</label>
+        <input type="text" id="name" name="name" value="@Model.Name" />
+    </div>
+    <input type="submit" value="Search" />
+</form>
 <table class="table">
     <thead>
     <tr>
@@ -37,9 +48,9 @@
         <th></th>
     </tr>
     </thead>
-    <tbody id="LionProfile">
+    <tbody>
     @foreach (var item in Model.LionProfile) {
-        <tr id="@item.LionProfileId">
+        <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.LionName)
             </td>
@@ -76,7 +87,7 @@
 }
 
 <div class="pagination-controls">
-    <a asp-page="./Index"
+    <a asp-page="./Search"
        asp-route-pageNumber="@(Model.PageIndex - 1)"
        class="btn btn-primary @prevDisabled">
         &laquo; Trang trước
@@ -84,30 +95,9 @@
 
     <span>Trang @Model.PageIndex / @Model.TotalPages</span>
 
-    <a asp-page="./Index"
+    <a asp-page="./Search"
        asp-route-pageNumber="@(Model.PageIndex + 1)"
        class="btn btn-primary @nextDisabled">
         Trang sau &raquo;
     </a>
 </div>
-
-<script src="~/js/signalr/signalr.js"></script>
-<script>
-    "use strict";
-
-    // Initialize SignalR connection
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/LionProfileHub")
-        .build();
-
-    // Start the connection
-    connection.start().then(function () {
-        console.log("Connected to the SignalR Hub");
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
-
-    connection.on("ReceiveDeleteProfile", function (profileId){
-        $('#LionProfile').find(`tr[id='${profileId}']`).remove();
-    });
-</script>
